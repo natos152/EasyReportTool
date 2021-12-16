@@ -1,0 +1,3 @@
+﻿(Get-WmiObject -Class Win32_NTEventlogFile | Where-Object LogfileName -EQ 'Application').BackupEventlog("C:\AFCON\Support\$(Get-Date -f 'dd-MM-yyyy')\EventLogs\application.evtx")
+(Get-WmiObject -Class Win32_NTEventlogFile | Where-Object LogfileName -EQ 'Pulse').BackupEventlog("C:\AFCON\Support\$(Get-Date -f 'dd-MM-yyyy')\EventLogs\Pulse.evtx")
+(Get-WmiObject -Class Win32_NTEventlogFile | Where-Object LogfileName -EQ 'System').BackupEventlog("C:\AFCON\Support\$(Get-Date -f 'dd-MM-yyyy')\EventLogs\System.evtx")

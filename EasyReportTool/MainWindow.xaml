@@ -1,0 +1,46 @@
+﻿<Window x:Class="EasyReportTool2.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:EasyReportTool2"
+        mc:Ignorable="d"
+        Title="Easy Report Tool" Loaded="Window_Loaded" Height="450" Width="810" Icon="report_check.png" ResizeMode="NoResize">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="224*"/>
+            <ColumnDefinition Width="177*"/>
+        </Grid.ColumnDefinitions>
+        <Label Content="Choose from which project to get reports :" HorizontalAlignment="Left" Height="31" Margin="36,30,0,0" VerticalAlignment="Top" Width="325" FontSize="16" FontWeight="Bold" FontFamily="Segoe UI Symbol"/>
+        <Button x:Name="browserBtn" Content="Choose" HorizontalAlignment="Left" Height="35" Margin="36,66,0,0" VerticalAlignment="Top" Width="80" FontSize="16" Click="BrowserBtn_Click" Foreground="#FF0A56F9" FontWeight="Bold" FontFamily="Segoe UI Symbol"/>
+        <Label Content="Choose which logs to create :" HorizontalAlignment="Left" Height="33" Margin="36,126,0,0" VerticalAlignment="Top" Width="230" FontSize="16" FontWeight="Bold" FontFamily="Segoe UI Symbol"/>
+        <CheckBox x:Name="comCheckBox" Content="Communication" HorizontalAlignment="Left" Height="21" Margin="42,164,0,0" VerticalAlignment="Top" Width="147" FontSize="16" FontWeight="Bold" FontFamily="Segoe UI Symbol"/>
+        <CheckBox x:Name="dailyLogCheckBox" Content="Daily Logs" HorizontalAlignment="Left" Height="21" Margin="42,190,0,0" VerticalAlignment="Top" Width="147" FontSize="16" FontWeight="Bold" FontFamily="Segoe UI Symbol"/>
+        <CheckBox x:Name="eventlogsCheckBox" Content="System, Pulse and Application event logs" HorizontalAlignment="Left" Height="25" Margin="42,216,0,0" VerticalAlignment="Top" Width="340" FontSize="16" FontWeight="Bold" FontFamily="Segoe UI Symbol"/>
+        <CheckBox x:Name="dumpCheckBox" Content="Dumps" HorizontalAlignment="Left" Height="21" Margin="42,242,0,0" VerticalAlignment="Top" Width="100" FontSize="16" FontWeight="Bold" FontFamily="Segoe UI Symbol"/>
+        <Button x:Name="createRepBtn" Content="Create Report" HorizontalAlignment="Left" Height="35" Margin="180,360,0,0" VerticalAlignment="Top" Width="120" FontSize="16" Click="CreateRepBtn_Click" RenderTransformOrigin="0.536,-0.343" Foreground="#FF1C8006" Background="#FFC3C3C3" FontWeight="Bold" FontFamily="Segoe UI Symbol"/>
+        <Label x:Name="prjName" Content="" HorizontalAlignment="Left" Height="32" Margin="157,68,0,0" VerticalAlignment="Top" Width="152" FontSize="16" Foreground="#FF0E22EC" FontWeight="Bold" FontFamily="Segoe UI Symbol"/>
+        <Label Content="Status :" HorizontalAlignment="Left" Height="30" Margin="10,309,0,0" VerticalAlignment="Top" Width="71" FontSize="16" RenderTransformOrigin="0.473,0.12" FontWeight="Bold" FontFamily="Segoe UI Symbol"/>
+        <Grid Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="199*"/>
+                <ColumnDefinition Width="202*"/>
+            </Grid.ColumnDefinitions>
+            <ProgressBar x:Name="pbar" HorizontalAlignment="Left" Height="35" Margin="75,308,0,0" VerticalAlignment="Top" Width="340" Minimum="0" Maximum="100" Grid.ColumnSpan="2"/>
+            <TextBlock Text="{Binding ElementName=pbar, Path=Value, StringFormat={}{0:0}%}" FontSize="16" TextAlignment="Center" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="220,315,135,78" Height="28" RenderTransformOrigin="1.022,0.333" Width="44"/>
+        </Grid>
+        <Line
+     X1="450" Y1="10"
+     X2="450" Y2="360"
+     Stroke="Black"
+     StrokeThickness="1" Grid.ColumnSpan="2"/>
+        <RadioButton x:Name="oneMinRadio" Content="1 Minuts" HorizontalAlignment="Left" Height="20" Margin="36,72,0,0" VerticalAlignment="Top" Width="109" FontSize="16" Grid.Column="1" FontWeight="Bold" FontFamily="Segoe UI Symbol"/>
+        <RadioButton x:Name="fiveMinRadio" Content="5 Minuts" HorizontalAlignment="Left" Height="20" Margin="36,97,0,0" VerticalAlignment="Top" Width="109" FontSize="16" Grid.Column="1" FontWeight="Bold" FontFamily="Segoe UI Symbol"/>
+        <RadioButton x:Name="tenMinRadio" Content="10 Minuts" HorizontalAlignment="Left" Height="20" Margin="36,122,0,0" VerticalAlignment="Top" Width="109" FontSize="16" Grid.Column="1" FontWeight="Bold" FontFamily="Segoe UI Symbol"/>
+        <RadioButton x:Name="sixtyMinRadio" Content="60 Minuts" HorizontalAlignment="Left" Height="20" Margin="36,147,0,0" VerticalAlignment="Top" Width="109" FontSize="16" Grid.Column="1" FontWeight="Bold" FontFamily="Segoe UI Symbol"/>
+        <Button x:Name="exitBtn" Content="Exit" HorizontalAlignment="Left" Height="35" Margin="250,360,0,0" VerticalAlignment="Top" Width="60" FontSize="16" Click="ExitBtn_Click" Foreground="Black" Grid.Column="1" FontWeight="Bold" FontFamily="Segoe UI Symbol"/>
+        <Label Content="Choose Interval of Record Pulse process :" HorizontalAlignment="Left" Height="31" Margin="28,30,0,0" VerticalAlignment="Top" Width="317" FontSize="16" Grid.Column="1" FontWeight="Bold" FontFamily="Segoe UI Symbol"/>
+        <Button x:Name="saveStopBtn" Content="Stop Record" HorizontalAlignment="Left" Height="35" Margin="180,200,0,0" VerticalAlignment="Top" Width="100" Click="SaveStop_Click" FontSize="16" Foreground="#FFF9200A" Grid.Column="1" Background="#FFC5C5C5" FontWeight="Bold" FontFamily="Segoe UI Symbol"/>
+        <Button x:Name="startRecordBtn" Content="Start Record" HorizontalAlignment="Left" Height="35" Margin="57,200,0,0" VerticalAlignment="Top" Width="100" Click="StartRecBtn_Click" RenderTransformOrigin="0.183,0.452" FontSize="16" Foreground="Green" Grid.Column="1" Background="#FFCDCCCC" FontWeight="Bold" FontFamily="Segoe UI Symbol"/>
+    </Grid>
+</Window>
