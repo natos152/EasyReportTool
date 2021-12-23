@@ -14,7 +14,7 @@
             <ColumnDefinition Width="0*"/>
         </Grid.ColumnDefinitions>
         <Label Content="Choose which project to get reports from:" HorizontalAlignment="Left" Height="31" Margin="46,68,0,0" VerticalAlignment="Top" Width="325" FontSize="16" FontWeight="Bold" FontFamily="Segoe UI Symbol"/>
-        <Button x:Name="browserBtn" Content="Choose" HorizontalAlignment="Left" Height="35" Margin="46,104,0,0" VerticalAlignment="Top" Width="80" FontSize="16" Click="BrowserBtn_Click" Foreground="#FF0A56F9" FontWeight="Bold" FontFamily="Segoe UI Symbol"/>
+        <Button x:Name="browserBtn" Content="Browse" HorizontalAlignment="Left" Height="35" Margin="46,104,0,0" VerticalAlignment="Top" Width="80" FontSize="16" Click="BrowserBtn_Click" Foreground="#FF0A56F9" FontWeight="Bold" FontFamily="Segoe UI Symbol"/>
         <Label Content="Choose which logs to create :" HorizontalAlignment="Left" Height="33" Margin="46,164,0,0" VerticalAlignment="Top" Width="230" FontSize="16" FontWeight="Bold" FontFamily="Segoe UI Symbol"/>
         <CheckBox x:Name="comCheckBox" Content="Communication" HorizontalAlignment="Left" Height="21" Margin="52,202,0,0" VerticalAlignment="Top" Width="147" FontSize="16" FontWeight="Bold" FontFamily="Segoe UI Symbol"/>
         <CheckBox x:Name="dailyLogCheckBox" Content="Daily Logs" HorizontalAlignment="Left" Height="21" Margin="52,228,0,0" VerticalAlignment="Top" Width="147" FontSize="16" FontWeight="Bold" FontFamily="Segoe UI Symbol"/>
