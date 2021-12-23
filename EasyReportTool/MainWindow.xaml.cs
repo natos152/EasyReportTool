@@ -1,13 +1,13 @@
 ﻿using EasyReportTool;
 using EasyReportTool.Enums;
-using EasyReportTool.Models;
-using Microsoft.Win32;
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Management.Automation;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Threading;
 
 namespace EasyReportTool2
@@ -20,27 +20,79 @@ namespace EasyReportTool2
         public MainWindow()
         {
             InitializeComponent();
+            m_notifyIcon.BalloonTipText = "Easy Report Tool has been minimised. Click the tray icon to show.";
+            m_notifyIcon.BalloonTipTitle = "Easy Report Tool";
+            m_notifyIcon.Text = "Easy Report Tool";
+            m_notifyIcon.Icon = new System.Drawing.Icon("report_check.ico");
+            m_notifyIcon.Click += new EventHandler(NotifyIcon_Click);
         }
+
 
         string targetPath = @"C:\AFCON\Support\";
         string projectPath = "";
         string projName = "";
         int interval = 0;
-        const string REG_PATH_EVENTLOG = @"SYSTEM\CurrentControlSet\Services\Eventlog\";
+        const string REG_PATH_EVENTLOG = @"SYSTEM\CurrentControlSet\Services\Eventlog";
         static readonly string[] logsNames = new string[] { "System", "Application", "Pulse" };
+        NotifyIcon m_notifyIcon = new NotifyIcon();
+
+
+        public void OnClose(object sender, CancelEventArgs args)
+        {
+            m_notifyIcon.Dispose();
+            m_notifyIcon = null;
+        }
+
+        private WindowState m_storedWindowState = WindowState.Normal;
+        public void OnStateChanged(object sender, EventArgs args)
+        {
+            if (WindowState == WindowState.Minimized)
+            {
+                Hide();
+                if (m_notifyIcon != null)
+                    m_notifyIcon.ShowBalloonTip(2000);
+            }
+            else
+                m_storedWindowState = WindowState;
+        }
+        void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs args)
+        {
+            CheckTrayIcon();
+        }
+
+        void NotifyIcon_Click(object sender, EventArgs e)
+        {
+            Show();
+            WindowState = m_storedWindowState;
+        }
+        void CheckTrayIcon()
+        {
+            ShowTrayIcon(!IsVisible);
+        }
+
+        void ShowTrayIcon(bool show)
+        {
+            if (m_notifyIcon != null)
+                m_notifyIcon.Visible = show;
+        }
 
         private void BrowserBtn_Click(object sender, RoutedEventArgs e)
         {
 
             projectPath = Globals.ReportTool.GetPathProject();
-            //string.IsNullOrWhiteSpace()
-            if (!string.IsNullOrWhiteSpace(projectPath))
+            if (!string.IsNullOrEmpty(projectPath))
             {
                 prjName.Visibility = Visibility.Visible;
                 string[] pathArr = projectPath.Split('\\');
                 string innerDir = pathArr[pathArr.Length - 1];
                 projName = innerDir;
                 prjName.Content = innerDir;
+            }
+            else
+            {
+                prjName.Visibility = Visibility.Hidden;
+                projName = string.Empty;
+                prjName.Content = string.Empty;
             }
         }
 
@@ -49,7 +101,7 @@ namespace EasyReportTool2
         {
             if (oneMinRadio.IsChecked == false && fiveMinRadio.IsChecked == false && tenMinRadio.IsChecked == false && sixtyMinRadio.IsChecked == false)
             {
-                MessageBox.Show("Please choose Interval before you start ro record data from Task Manager.", "Error");
+                System.Windows.MessageBox.Show("Choose the Interval before you start recording.", "Error");
                 return;
             }
             if (oneMinRadio.IsChecked == true)
@@ -60,31 +112,41 @@ namespace EasyReportTool2
                 interval = (int)TimeInterval.TenMin;
             if (sixtyMinRadio.IsChecked == true)
                 interval = (int)TimeInterval.Hour;
+            start_rec.Visibility = Visibility.Visible;
             Globals.CapturePulseProcess.CreateCSVFile(targetPath);
             Globals.CapturePulseProcess.InsertEachInterval(interval);
+            System.Windows.MessageBox.Show("Record data started, you can miminize the program during the recording.", "Success");
             startRecordBtn.IsEnabled = false;
+            startRecordBtn.Opacity = 40;
             saveStopBtn.IsEnabled = true;
+            saveStopBtn.Opacity = 100;
+            SysTrayBtn.IsEnabled = true;
+            SysTrayBtn.Opacity = 100;
         }
 
         //Stop insertion data to CSV
         private void SaveStop_Click(object sender, RoutedEventArgs e)
         {
             Globals.CapturePulseProcess.StopRecord();
-            MessageBox.Show("Record data stopped, The CSV saved on C: --> AFCON --> Support", "Success");
+            System.Windows.MessageBox.Show("Recording data stopped, The CSV saved on C: --> AFCON --> Support", "Success");
             Process.Start(targetPath);
             startRecordBtn.IsEnabled = true;
+            startRecordBtn.Opacity = 100;
             saveStopBtn.IsEnabled = false;
-        }
-
-        private void ExitBtn_Click(object sender, RoutedEventArgs e)
-        {
-            Environment.Exit(1);
+            saveStopBtn.Opacity = 40;
+            SysTrayBtn.IsEnabled = false;
+            SysTrayBtn.Opacity = 40;
+            start_rec.Visibility = Visibility.Hidden;
         }
 
         //Increase the maximum log size of System, Application and Pulse 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            start_rec.Visibility = Visibility.Hidden;
             saveStopBtn.IsEnabled = false;
+            saveStopBtn.Opacity = 30;
+            SysTrayBtn.IsEnabled = false;
+            SysTrayBtn.Opacity = 40;
             Globals.ReportTool.SetLogsMaxSize(REG_PATH_EVENTLOG, logsNames);
         }
 
@@ -97,29 +159,25 @@ namespace EasyReportTool2
         //Start button to copy data to support folder 
         private void CreateRepBtn_Click(object sender, RoutedEventArgs e)
         {
-            createRepBtn.IsEnabled = false;
+            createRepBtn.Opacity = 40;
             DateTime localDate = DateTime.Now;
             var date = localDate.Date;
             string dateNowFolder = date.ToString("dd-MM-yyyy");
-            if (projectPath.Equals(""))
+            if (string.IsNullOrEmpty(projectPath))
             {
-                MessageBox.Show("Not chosen folder project to create logs", "Error");
+                System.Windows.MessageBox.Show("Project folder not selected.", "Error");
                 return;
             }
-            if (
-                comCheckBox.IsChecked.Equals(false)
-                && dailyLogCheckBox.IsChecked.Equals(false)
-                && dumpCheckBox.IsChecked.Equals(false)
-                && eventlogsCheckBox.Equals(false)
-                )
+            if (comCheckBox.IsChecked == false && dailyLogCheckBox.IsChecked == false && dumpCheckBox.IsChecked == false && eventlogsCheckBox.IsChecked == false)
             {
-                MessageBox.Show("Not chosen report to create", "Error");
+                System.Windows.MessageBox.Show("Please mark at least one log type.", "Error");
                 return;
             }
+            createRepBtn.IsEnabled = false;
             string reportDistPath = targetPath + dateNowFolder + "_" + projName;
-            if (File.Exists(reportDistPath))
+            if (Directory.Exists(reportDistPath))
             {
-                File.Delete(reportDistPath);
+                Directory.Delete(reportDistPath, true);
                 Directory.CreateDirectory(reportDistPath);
             }
 
@@ -133,7 +191,7 @@ namespace EasyReportTool2
                 string comFolder = reportDistPath + @"\Communication";
                 if (!Directory.Exists(comFolder))
                     Directory.CreateDirectory(comFolder);
-                Globals.ReportTool.DirectoryCopy(projectPath + @"\Communication", comFolder, true);
+                Globals.ReportTool.DirectoryCopy(projectPath + @"\Communication", comFolder, false);
             }
             pbar.Value += 10;
             DoEvents();
@@ -142,7 +200,7 @@ namespace EasyReportTool2
                 string comFolder = reportDistPath + @"\DailyLog";
                 if (!Directory.Exists(comFolder))
                     Directory.CreateDirectory(comFolder);
-                Globals.ReportTool.DirectoryCopy(projectPath + @"\DailyLog", comFolder, true);
+                Globals.ReportTool.DirectoryCopy(projectPath + @"\DailyLog", comFolder, false);
             }
             pbar.Value += 10;
             DoEvents();
@@ -165,7 +223,7 @@ namespace EasyReportTool2
             {
                 createRepBtn.IsEnabled = true;
                 string docPulse = @"%UserProfile%\Documents\Pulse";
-                string localAppData = @"%localappdata%\CrashDumps\";
+                string localAppData = @"%localappdata%\CrashDumps";
                 string WERReportQueuePath = @"C:\ProgramData\Microsoft\Windows\WER\ReportQueue";
                 string docPulsePath = Environment.ExpandEnvironmentVariables(docPulse);
                 string localAppDataPath = Environment.ExpandEnvironmentVariables(localAppData);
@@ -193,9 +251,11 @@ namespace EasyReportTool2
             pbar.Value += 10;
             DoEvents();
 
-            MessageBox.Show("Done to create reports, the files saved on 'C:' --> Afcon --> Support  !", "Success");
+            System.Windows.MessageBox.Show("Done to create reports, the files are saved in 'C:' --> Afcon --> Support.", "Success");
             Process.Start(targetPath);
+
             //Reset checkboxs, prgress bar and project path 
+            createRepBtn.IsEnabled = true;
             comCheckBox.IsChecked = false;
             dailyLogCheckBox.IsChecked = false;
             dailyLogCheckBox.IsChecked = false;
@@ -203,6 +263,27 @@ namespace EasyReportTool2
             dumpCheckBox.IsChecked = false;
             pbar.Value = 0;
             projectPath = "";
+        }
+
+        private void SysTrayBtn_Click(object sender, RoutedEventArgs e)
+        {
+            WindowState = WindowState.Minimized;
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (startRecordBtn.IsEnabled == false)
+            {
+                DialogResult windowStopRec = System.Windows.Forms.MessageBox.Show(
+                    "Stop recording, Are you sure ?",
+                    "Recording in progress",
+                    MessageBoxButtons.OKCancel);
+                e.Cancel = (windowStopRec == System.Windows.Forms.DialogResult.Cancel);
+            }
+            else
+            {
+                Environment.Exit(0);
+            }
         }
     }
 }

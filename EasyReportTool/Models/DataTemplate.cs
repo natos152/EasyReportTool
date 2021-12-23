@@ -9,23 +9,23 @@ namespace EasyReportTool.Models
     public class DataTemplate
     {
         string processName;
-        double memoryAmount;
-        double cpuAmount;
+        string memoryAmount;
+        string cpuAmount;
 
         public string ProcessName { get => processName; set => processName = value; }
-        public double MemoryAmount { get => memoryAmount; set => memoryAmount = value; }
-        public double CpuAmount { get => cpuAmount; set => cpuAmount = value; }
+        public string RAMAmount { get => memoryAmount; set => memoryAmount = value; }
+        public string CPUAmount { get => cpuAmount; set => cpuAmount = value; }
 
         public DataTemplate()
         {
 
         }
 
-        public DataTemplate(string processName, double cpuAmount, double memoryAmount)
+        public DataTemplate(string processName, string cpuAmount, string memoryAmount)
         {
             ProcessName = processName;
-            CpuAmount = cpuAmount;
-            MemoryAmount = memoryAmount;
+            CPUAmount = cpuAmount;
+            RAMAmount = memoryAmount;
         }
     }
 }

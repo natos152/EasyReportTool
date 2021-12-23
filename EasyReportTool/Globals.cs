@@ -19,6 +19,8 @@ namespace EasyReportTool
         #region Model
         public static DataTemplate DataTemplate { get; set; }
 
+        public static PulseProcess PulseProcess { get; set; }
+
         #endregion
 
 
